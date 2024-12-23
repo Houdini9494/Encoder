@@ -1,55 +1,37 @@
-import numpy as np
-
 #funzione x convertire decimali in binario
-def conv_base(numero_iniz,nuova_base):
-
-    numero=numero_iniz
+def conv_base(numero,nuova_base):
     risultato=[]
-
     while numero>0:
         resto=numero%nuova_base
         risultato.append(resto)
-        numero=numero//nuova_base
-
+        numero//=nuova_base
     risultato.reverse()
-    array=np.array(risultato)
-    return array
+    return risultato
 
 #---------------------------------------------------------------------------
-letters="abcdefghijklmnopqrstuvwxyz"
+while True:
+    nome=input("Inserire il nome da convertire in binario: ").strip().lower()
 
-nome=input("Inserire il nome da convertire in binario: ")
-flag=True
+    # converte il nome in una lista di numeri ASCII
+    nome_ascii=[]
+    for i in nome:
+        nome_ascii.append(ord(i))
 
-while flag:
-    #converte lettere in numeri
-    nome_numero=[]
-    corretto=True #verifica se il nome contiene SOLO lettere dell'alfabeto
-    for i in nome.lower():
-        if i in letters:
-            nome_numero.append(letters.index(i)+1)
-        else:
-            corretto=False
+    # converte ogni numero ASCII in binario
+    nome_binario=[]
+    for i in nome_ascii:
+        # map() applica la funzione str() ad ogni elemento della lista restituita dalla funz. conv_base(), quindi converte tutti gli int a str
+        # "".join() unisce tutti gli elem. della lista di stringhe prodotta da map() in una unica stringa senza spazi e senza virgole di separazione
+        nome_binario.append("".join(map(str,conv_base(i,2))))
 
-    #se il nome inserito è corretto procede con la conversione
-    if corretto:
-        #converte numeri decimali in binario
-        risultato=[]
-        for n in nome_numero:
-            risultato.append(conv_base(n,2))
+    # formatta il risultato unendo le liste di valori binari; ogni lettera è una lista binaria
+    risultato="".join(nome_binario)
 
-        #stampa risultato contenuto nella lista
-        print("il nome",nome,"in binario è: ")
-        for i in risultato:
-            print(str(i).strip("[]"), end=" ") #per stampare tutto il resto ma senza le parentesi quadre
-    else:
-        print("Nome inserito non valido per presenza di numeri, caratteri speciali o lettere sconosciute...")
+    # stampa risultato contenuto nella lista
+    print(f"il nome '{nome}', in binario equivale a: {risultato}")
 
-    #iterazione per inserimento di un nuovo nome
-    scelta=input("\nVuoi convertire un altro nome? (y/n): ")
+    # iterazione per inserimento di un nuovo nome
+    scelta=input("\nVuoi convertire un altro nome? (y/n): ").strip().lower()
     if scelta=="n":
         print("Esco dal programma...")
-        flag=False
-    else:
-        nome=input("Inserire il nome da convertire in binario: ")
-
+        break
