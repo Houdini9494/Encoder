@@ -65,7 +65,7 @@ def menu():
     opzioni={
         1:"Converti stringa in binario",
         2:"Calcola hash di una stringa",
-        3:"Genera psw",
+        3:"Genera psw sicura",
         4:"Esci dal programma"
     }
     print("\n--------ENCODER--------\n")
@@ -86,11 +86,9 @@ def main():
 
             if scelta==1:
                 stringa=input("Inserisci una stringa: ").strip().lower()
-                # stampa risultato contenuto nella lista
                 print(f"la stringa '{stringa}', in binario equivale a: {str_to_bin(stringa)}")
             elif scelta==2:
                 stringa=input("Inserisci una stringa: ").strip()
-                # calcolo hash
                 print(f"l'hash sha512 di '{stringa}' è: {hashing(stringa)}")
             elif scelta==3:
                 stringa=input("Inserisci una stringa di caratteri: ")
@@ -107,6 +105,6 @@ def main():
             menu()
     except Exception as e:
         print(f"Si è verificato un errore: {e}")
-#--------------------------------------
+#---------------------------------------------------------------------------
 if __name__ == "__main__":
     main()
