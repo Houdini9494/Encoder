@@ -1,4 +1,7 @@
 import hashlib
+import os
+import random
+import traceback
 #---------------------------------------------------------------------------
 #funzione x convertire decimali in binario
 def conv_base(numero,nuova_base):
@@ -31,16 +34,39 @@ def str_to_bin(stringa):
     return risultato
 #---------------------------------------------------------------------------
 #funzione x hashare l'input
-def hashing(stringa):
-    hash=hashlib.sha3_512((stringa).encode()).hexdigest() #hexdigest() restituisce il digest in un formato esadecimale piu facilemnte leggibile
+def hashing(input):
+    hash=hashlib.sha3_512((input).encode()).hexdigest() #hexdigest() restituisce il digest in un formato esadecimale piu facilemnte leggibile
     return hash
 #---------------------------------------------------------------------------
+#funzione genera psw
+def genera_psw(input,lunghezza):
+    iterazioni=1000 #numero di iterazioni di hashing per generare entropia
+    sale=os.urandom(32).hex() #un pizzico di sale per aggiungere sicurezza
+    pepe="-.,<_:;>°#@+*]€['^?=)(/&%$£!|\\"
+
+    #hash iterativo dell'input
+    hash=input+sale
+    for i in range(iterazioni):
+        hash=hashlib.sha3_512((hash+sale).encode()).hexdigest()
+
+    #mixer di caratteri alfanumerici e simboli
+    mix=[]
+    for i in range(lunghezza):
+        if i%2==0:
+            mix.append(random.choice(hash))
+        else:
+            mix.append(random.choice(pepe))
+
+    return "".join(mix)
+
+#-----------------------------------------------------------
 # menu
 def menu():
     opzioni={
         1:"Converti stringa in binario",
         2:"Calcola hash di una stringa",
-        3:"Esci dal programma"
+        3:"Genera psw",
+        4:"Esci dal programma"
     }
     print("\n--------ENCODER--------\n")
     print("\tMENU")
@@ -49,30 +75,38 @@ def menu():
     print("\n-----------------------\n")
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
-try:
-    menu()
-    while True:
-        scelta=int(input("Scegli l'operazione da eseguire (1, 2, 3...): "))
-        while scelta<1 or scelta>3:
-            print("Inserita scelta errata!")
-            scelta=int(input("\nScegli l'operazione da eseguire (1, 2, 3...): "))
-
-        if scelta==1:
-            stringa=input("Inserisci una stringa: ").strip().lower()
-            # stampa risultato contenuto nella lista
-            print(f"la stringa '{stringa}', in binario equivale a: {str_to_bin(stringa)}")
-        elif scelta==2:
-            stringa=input("Inserisci una stringa: ").strip()
-            # calcolo hash
-            print(f"l'hash sha512 di '{stringa}' è: {hashing(stringa)}")
-        elif scelta==3:
-            print("Esco dal programma...")
-            break
-        else:
-            print("Inserita scelta errata.")
-            break
+def main():
+    try:
         menu()
-except:
-    print("Si è verificato un errore, riavviare il programma.")
+        while True:
+            scelta=int(input("Scegli l'operazione da eseguire (1, 2, 3...): "))
+            while scelta<1 or scelta>3:
+                print("Inserita scelta errata!")
+                scelta=int(input("\nScegli l'operazione da eseguire (1, 2, 3...): "))
 
-
+            if scelta==1:
+                stringa=input("Inserisci una stringa: ").strip().lower()
+                # stampa risultato contenuto nella lista
+                print(f"la stringa '{stringa}', in binario equivale a: {str_to_bin(stringa)}")
+            elif scelta==2:
+                stringa=input("Inserisci una stringa: ").strip()
+                # calcolo hash
+                print(f"l'hash sha512 di '{stringa}' è: {hashing(stringa)}")
+            elif scelta==3:
+                stringa=input("Inserisci una stringa di caratteri: ")
+                lunghezza=int(input("Inserisci la lunghezza della psw da generare: "))
+                while lunghezza<=8:
+                    lunghezza=int(input("Inserito valore errato, consigliato un minimo di 8 caratteri: "))
+                print(f"\n{genera_psw(stringa,lunghezza)}")
+            elif scelta==4:
+                print("Esco dal programma...")
+                break
+            else:
+                print("Inserita scelta errata.")
+                break
+            menu()
+    except Exception as e:
+        print(f"Si è verificato un errore: {e}")
+#--------------------------------------
+if __name__ == "__main__":
+    main()
